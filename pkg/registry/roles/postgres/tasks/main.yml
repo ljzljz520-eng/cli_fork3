@@ -30,6 +30,11 @@
       POSTGRES_USER: "{{ postgres_user }}"
       POSTGRES_PASSWORD: "{{ postgres_password }}"
       POSTGRES_DB: "{{ postgres_db }}"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U {{ postgres_user }}"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
     volumes:
       - "{{ server_dir }}/database/data/:/var/lib/postgresql/data"
 
@@ -50,7 +55,7 @@
         "-database",
         "postgres://{{ postgres_user }}:{{ postgres_password }}@{{ postgres_container_name }}:{{ postgres_port }}/{{ postgres_db }}?sslmode={{ postgres_ssl_mode }}",
         "up",
-        "{{ migrate_number }}",
+        "{{ migrate_number | default('1') }}",
       ]
     volumes:
-      - "{{ server_dir }}/backend/platform/migrations/:/migrations"
+      - "{{ server_dir }}/{{ backend_migrations_path | default('backend/platform/migrations') }}/:/migrations"

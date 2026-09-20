@@ -10,11 +10,17 @@
   hosts: cgapp_project
 
   #
-  # List of all roles.
+  # List of all roles (conditional roles are enabled by capability contracts).
   #
   roles:
     - { role: docker, tags: [docker] }
     - { role: backend, tags: [backend] }
+{{- if ne .RoleCache "none" }}
     - { role: redis, tags: [redis] }
+{{- end }}
+{{- if ne .RoleDatabase "none" }}
     - { role: postgres, tags: [postgres] }
-{{ if ne .Proxy "none" }}    - { role: {{.Proxy}}, tags: [{{.Proxy}}] }{{ end }}
+{{- end }}
+{{- if ne .RoleProxy "none" }}
+    - { role: {{ .RoleProxy }}, tags: [{{ .RoleProxy }}] }
+{{- end }}

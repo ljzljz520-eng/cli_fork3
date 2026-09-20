@@ -1,0 +1,45 @@
+# Built-in database capability contracts.
+---
+apiVersion: cgapp.io/v1
+kind: database
+name: postgres
+display: PostgreSQL
+version: "latest"
+upstream: official postgres image
+runtime:
+  language: image
+  image: postgres
+ports:
+  - name: postgres
+    port: 5432
+    hostPort: 5432
+    protocol: tcp
+    candidates: [15432, 5433, 5434, 5435]
+auth:
+  mechanism: none
+env:
+  consumes:
+    - {name: POSTGRES_USER, required: true, default: postgres}
+    - {name: POSTGRES_PASSWORD, required: true, secret: true, default: postgres}
+    - {name: POSTGRES_DB, required: true, default: postgres}
+  produces:
+    - {name: DB_HOST, default: cgapp-postgres}
+    - {name: DB_PORT, default: "5432"}
+    - {name: DB_USER, default: postgres}
+    - {name: DB_PASSWORD, secret: true, default: postgres}
+    - {name: DB_NAME, default: postgres}
+    - {name: DB_SSL_MODE, default: disable}
+health:
+  type: tcp
+  portName: postgres
+  interval: 10s
+  timeout: 3s
+  retries: 12
+requires:
+  # The deploy/verify database role runs golang-migrate against the
+  # backend migrations directory, so the backend must publish migrations.
+  - name: migrations
+    attributes: {format: golang-migrate}
+offers:
+  - name: database
+    attributes: {driver: postgres}

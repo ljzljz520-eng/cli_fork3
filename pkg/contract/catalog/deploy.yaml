@@ -1,0 +1,13 @@
+# Built-in deployment engine capability contracts.
+---
+apiVersion: cgapp.io/v1
+kind: deploy
+name: ansible
+display: Ansible playbook
+version: "2.10+"
+runtime:
+  language: binary
+  version: ">=2.10"
+offers:
+  - name: deploy
+    attributes: {engine: ansible}

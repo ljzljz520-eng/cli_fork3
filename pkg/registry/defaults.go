@@ -22,9 +22,19 @@ type Variables struct {
 type CreateAnswers struct {
 	Backend       string
 	Frontend      string
+	Database      string
+	Cache         string
 	Proxy         string
 	AgreeCreation bool `survey:"agree"`
 }
+
+// DatabaseOptions/CacheOptions/ProxyOptions are the role choices shared by
+// the default and the custom-template surveys.
+var (
+	DatabaseOptions = []string{"none", "postgres"}
+	CacheOptions    = []string{"none", "redis"}
+	ProxyOptions    = []string{"none", "traefik", "traefik-acme-dns", "nginx"}
+)
 
 var (
 	// EmbedMiscFiles misc files and configs.
@@ -90,15 +100,30 @@ var (
 			},
 		},
 		{
+			Name: "database",
+			Prompt: &survey.Select{
+				Message:  "Choose a database:",
+				Help:     "Compatibility with the backend template is validated before generation.",
+				Options:  DatabaseOptions,
+				Default:  "none",
+				PageSize: 2,
+			},
+		},
+		{
+			Name: "cache",
+			Prompt: &survey.Select{
+				Message:  "Choose a cache:",
+				Help:     "Compatibility with the backend template is validated before generation.",
+				Options:  CacheOptions,
+				Default:  "none",
+				PageSize: 2,
+			},
+		},
+		{
 			Name: "proxy",
 			Prompt: &survey.Select{
-				Message: "Choose a web/proxy server:",
-				Options: []string{
-					"none",
-					"traefik",
-					"traefik-acme-dns",
-					"nginx",
-				},
+				Message:  "Choose a web/proxy server:",
+				Options:  ProxyOptions,
 				Default:  "none",
 				PageSize: 4,
 			},
@@ -129,15 +154,28 @@ var (
 			},
 		},
 		{
+			Name: "database",
+			Prompt: &survey.Select{
+				Message:  "Choose a database:",
+				Options:  DatabaseOptions,
+				Default:  "none",
+				PageSize: 2,
+			},
+		},
+		{
+			Name: "cache",
+			Prompt: &survey.Select{
+				Message:  "Choose a cache:",
+				Options:  CacheOptions,
+				Default:  "none",
+				PageSize: 2,
+			},
+		},
+		{
 			Name: "proxy",
 			Prompt: &survey.Select{
-				Message: "Choose a web/proxy server:",
-				Options: []string{
-					"none",
-					"traefik",
-					"traefik-acme-dns",
-					"nginx",
-				},
+				Message:  "Choose a web/proxy server:",
+				Options:  ProxyOptions,
 				Default:  "none",
 				PageSize: 4,
 			},
@@ -147,56 +185,6 @@ var (
 			Prompt: &survey.Confirm{
 				Message: "If everything is okay, can I create this project for you? ;)",
 				Default: true,
-			},
-		},
-	}
-
-	// AnsibleInventoryVariables list of variables for inventory.
-	AnsibleInventoryVariables = map[string]*Variables{
-		"none": {
-			List: map[string]interface{}{
-				"Proxy": "none",
-			},
-		},
-		"traefik": {
-			List: map[string]interface{}{
-				"Proxy":    "traefik",
-				"Wildcard": false,
-			},
-		},
-		"traefik-acme-dns": {
-			List: map[string]interface{}{
-				"Proxy":    "traefik",
-				"Wildcard": true,
-			},
-		},
-		"nginx": {
-			List: map[string]interface{}{
-				"Proxy": "nginx",
-			},
-		},
-	}
-
-	// AnsiblePlaybookVariables list of variables for playbook.
-	AnsiblePlaybookVariables = map[string]*Variables{
-		"none": {
-			List: map[string]interface{}{
-				"Proxy": "none",
-			},
-		},
-		"traefik": {
-			List: map[string]interface{}{
-				"Proxy": "traefik",
-			},
-		},
-		"traefik-acme-dns": {
-			List: map[string]interface{}{
-				"Proxy": "traefik",
-			},
-		},
-		"nginx": {
-			List: map[string]interface{}{
-				"Proxy": "nginx",
 			},
 		},
 	}

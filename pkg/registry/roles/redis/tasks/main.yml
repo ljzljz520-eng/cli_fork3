@@ -26,5 +26,10 @@
       - name: "{{ docker_network }}"
     ports:
       - "{{ redis_port }}:{{ redis_port }}"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
     volumes:
       - "{{ server_dir }}/cache/data/:/data"

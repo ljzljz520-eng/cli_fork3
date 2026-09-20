@@ -24,8 +24,15 @@ func GitClone(templateType, templateURL string) error {
 	// Get current directory.
 	currentDir, _ := os.Getwd()
 
-	// Set project folder.
-	folder := filepath.Join(currentDir, templateType)
+	return GitCloneTo(filepath.Join(currentDir, templateType), templateURL)
+}
+
+// GitCloneTo clones the template repository into the given absolute folder.
+func GitCloneTo(folder, templateURL string) error {
+	// Checking for nil.
+	if folder == "" || templateURL == "" {
+		return fmt.Errorf("project template not found")
+	}
 
 	// Clone project template.
 	_, errPlainClone := git.PlainClone(

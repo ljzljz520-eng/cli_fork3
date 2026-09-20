@@ -1,0 +1,274 @@
+# Built-in frontend capability contracts.
+#
+# Frontends are scaffolded by create-vite/create-next-app/nuxi and are not
+# part of the containerized verify stack; their contracts describe the env
+# glue naming and browser-origin requirements of each toolchain family.
+#
+# requires:
+#   http-api    - a backend publishing an HTTP API (base path is bound by glue)
+#   browser-api - API must be reachable from a browser (backend CORS or a
+#                 same-origin ingress proxy)
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: vanilla
+display: Vanilla JS (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: vanilla-ts
+display: Vanilla TS (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: react
+display: React (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: react-ts
+display: React + TypeScript (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: react-swc
+display: React SWC (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: react-swc-ts
+display: React SWC + TypeScript (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: preact
+display: Preact (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: preact-ts
+display: Preact + TypeScript (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: vue
+display: Vue (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: vue-ts
+display: Vue + TypeScript (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: svelte
+display: Svelte (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: svelte-ts
+display: Svelte + TypeScript (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: solid
+display: Solid (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: solid-ts
+display: Solid + TypeScript (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: lit
+display: Lit (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: lit-ts
+display: Lit + TypeScript (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: qwik
+display: Qwik (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: qwik-ts
+display: Qwik + TypeScript (Vite)
+version: "latest"
+runtime: {language: node, version: ">=20.19"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: VITE_API_BASE_URL, devPort: 5173}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: next
+display: Next.js (React)
+version: "latest"
+runtime: {language: node, version: ">=20.9"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: NEXT_PUBLIC_API_BASE_URL, devPort: 3000}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: next-ts
+display: Next.js + TypeScript (React)
+version: "latest"
+runtime: {language: node, version: ">=20.9"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: NEXT_PUBLIC_API_BASE_URL, devPort: 3000}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: nuxt
+display: Nuxt (Vue)
+version: "3.x"
+runtime: {language: node, version: ">=18.0"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: NUXT_PUBLIC_API_BASE_URL, devPort: 3000}
+---
+apiVersion: cgapp.io/v1
+kind: frontend
+name: sveltekit
+display: SvelteKit (Svelte + TypeScript)
+version: "latest"
+runtime: {language: node, version: ">=20.0"}
+auth: {mechanism: none}
+requires:
+  - {name: http-api}
+  - {name: browser-api}
+glue: {envFile: .env.local, apiURLEnv: PUBLIC_API_BASE_URL, devPort: 5173}

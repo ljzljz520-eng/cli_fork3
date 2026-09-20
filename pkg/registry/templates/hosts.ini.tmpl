@@ -35,7 +35,7 @@ server_group=docker
 #
 
 # Set your project domain
-project_domain=example.com
+project_domain={{ .ProjectDomain }}
 
 #
 # Docker configuration:
@@ -50,82 +50,89 @@ docker_network=cgapp_network
 
 # Set backend port number,
 # MUST BE MATCH to the port that is listed in your `./backend/.env` file!
-backend_port=5000
+backend_port={{ .BackendPort }}
 
+#
+# Capability contract marker (do not remove):
+#
+# cgapp_contract={{ .Marker }}
+{{ if ne .DatabaseName "none" }}
 #
 # PostgreSQL configuration (backend DB):
 #
 
 # Set PostgreSQL container name
-# MUST BE MATCH to the port that is listed in your `./backend/.env` file!
-postgres_container_name=cgapp-postgres
+# MUST BE MATCH to the host that is listed in your `./backend/.env` file!
+postgres_container_name={{ .Postgres.ContainerName }}
 # Set PostgreSQL version (for example, 13.2)
-postgres_version=latest
+postgres_version={{ .Postgres.Version }}
 # Set PostgreSQL port number,
 # MUST BE MATCH to the port that is listed in your `./backend/.env` file!
-postgres_port=5432
+postgres_port={{ .Postgres.Port }}
 # Set PostgreSQL user name,
 # MUST BE MATCH to the user name that is listed in your `./backend/.env` file!
-postgres_user=postgres
+postgres_user={{ .Postgres.User }}
 # Set PostgreSQL password,
 # MUST BE MATCH to the password that is listed in your `./backend/.env` file!
-postgres_password=password
+postgres_password={{ .Postgres.Password }}
 # Set PostgreSQL DB name,
 # MUST BE MATCH to the DB name that is listed in your `./backend/.env` file!
-postgres_db=postgres
+postgres_db={{ .Postgres.DB }}
 # Set PostgreSQL SSL mode state ('enabled' or 'disabled'),
 # MUST BE MATCH to the SSL mode state that is listed in your `./backend/.env` file!
-postgres_ssl_mode=disable
+postgres_ssl_mode={{ .Postgres.SSLMode }}
 
 #
 # Go-Migrate configuration (DB migrations):
 #
 
+# Path (relative to server_dir) to migration files
+backend_migrations_path={{ .Postgres.MigrationsPath }}
 # Set migration number,
 # if you WANT to migrate all of your migrations, just leave it blank,
 # for only initial migration set it to '1'
-migrate_number=1
-
+migrate_number={{ .Postgres.MigrateNumber }}
+{{ end }}{{ if ne .CacheName "none" }}
 #
 # Redis configuration (backend cache):
 #
 
 # Set Redis container name
-# MUST BE MATCH to the port that is listed in your `./backend/.env` file!
-redis_container_name=cgapp-redis
+# MUST BE MATCH to the host that is listed in your `./backend/.env` file!
+redis_container_name={{ .Redis.ContainerName }}
 # Set Redis version (for example, 6.2)
-redis_version=latest
+redis_version={{ .Redis.Version }}
 # Set Redis port number,
 # MUST BE MATCH to the port that is listed in your `./backend/.env` file!
-redis_port=6379
-
-{{ if eq .Proxy "traefik" }}#
+redis_port={{ .Redis.Port }}
+{{ end }}{{ if eq .ProxyName "traefik" }}
+#
 # Traefik Proxy configuration:
 #
 
 # Set Traefik version (for example, v2.4)
-traefik_version=latest
+traefik_version={{ .Traefik.Version }}
 # Set log level in capital letters (DEBUG, PANIC, FATAL, ERROR, WARN, INFO)
-traefik_log_level=ERROR
+traefik_log_level={{ .Traefik.LogLevel }}
 # Set log format between json and common
-traefik_log_format=json
+traefik_log_format={{ .Traefik.LogFormat }}
 # Set URL for Traefik admin dashboard,
 # if you DO NOT NEED dashboard (Web UI), just leave it blank
-traefik_dashboard_url=cp.example.com
+traefik_dashboard_url={{ .Traefik.DashboardURL }}
 # Set username for Traefik admin dashboard,
 # DO NOT FORGET to set this setting, if `traefik_dashboard_url` variable IS NOT empty!
-traefik_dashboard_user=admin
+traefik_dashboard_user={{ .Traefik.DashboardUser }}
 # Set hashed password for Traefik admin dashboard,
 # DO NOT FORGET to set this setting, if `traefik_dashboard_url` variable IS NOT empty!
 # See: https://doc.traefik.io/traefik/middlewares/basicauth/#users
-traefik_dashboard_password=admin:$$apr1$$WpxRpfMZ$$TMTfGB37C9xAHiPIDiFiB1
+traefik_dashboard_password={{ .Traefik.DashboardPassword }}
 
 #
 # ACME configuration (Let's Encrypt):
 #
 
 # Set your email address for SSL cert
-acme_email=mail@example.com
+acme_email={{ .Traefik.AcmeEmail }}
 {{ if .Wildcard }}
 # You choose a DNS way to getting SSL cert,
 # DO NOT FORGET to set this variable here as well as in `./roles/traefik/tasks/main.yml` file!
@@ -137,14 +144,16 @@ acme_dns_provider=digitalocean
 # for example, auth token for DigitalOcean
 do_auth_token=XXXXXXXXXXX
 {{ else }}# Change to 'no' for getting a real SSL cert
-acme_staging=yes{{ end }}
-{{ else if eq .Proxy "nginx" }}#
+acme_staging=yes
+{{ end }}{{ else if eq .ProxyName "nginx" }}
+#
 # Nginx configuration:
 #
 
 # Set Nginx version (for example, 1.20-alpine)
-nginx_version=alpine
+nginx_version={{ .Nginx.Version }}
 # Set redirect from HTTP to HTTPS for default server
-nginx_use_only_https=yes
+nginx_use_only_https={{ .Nginx.UseOnlyHTTPS }}
 # Set redirect from WWW to non-WWW domain for default server
-nginx_redirect_to_non_www=yes{{ end }}
+nginx_redirect_to_non_www={{ .Nginx.RedirectToNonWWW }}
+{{ end }}

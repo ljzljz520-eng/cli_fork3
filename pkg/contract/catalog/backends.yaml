@@ -1,0 +1,209 @@
+# Built-in backend capability contracts.
+#
+# Values below were verified against the upstream create-go-app templates:
+#   - fiber:    github.com/create-go-app/fiber-go-template @ master
+#   - net/http: github.com/create-go-app/net_http-go-template @ master
+#   - chi:      github.com/create-go-app/chi-go-template @ main
+#
+# A custom backend template may ship its own cgapp.contract.yaml to override.
+---
+apiVersion: cgapp.io/v1
+kind: backend
+name: fiber
+display: Fiber (Go)
+version: "2.x"
+upstream: fiber-go-template@master
+runtime:
+  language: go
+  version: ">=1.23"
+ports:
+  - name: http
+    port: 5000
+    hostPort: 5000
+    protocol: tcp
+    candidates: [5001, 5002, 5003, 5004, 5005, 5006, 5007, 5008, 5009]
+routes:
+  - path: /api/v1
+    kind: api
+    method: GET
+  - path: /swagger/index.html
+    kind: docs
+    method: GET
+    expect: 200
+auth:
+  mechanism: jwt
+  cors:
+    enabled: true
+    defaultAllow: "*"
+env:
+  consumes:
+    - {name: STAGE_STATUS, default: "dev"}
+    - {name: SERVER_HOST, default: "0.0.0.0"}
+    - {name: SERVER_PORT, required: true, from: "self.port.http"}
+    - {name: SERVER_READ_TIMEOUT, default: "60"}
+    - {name: JWT_SECRET_KEY, required: true, secret: true, default: secret}
+    - {name: JWT_SECRET_KEY_EXPIRE_MINUTES_COUNT, default: "15"}
+    - {name: JWT_REFRESH_KEY, required: true, secret: true, default: refresh}
+    - {name: JWT_REFRESH_KEY_EXPIRE_HOURS_COUNT, default: "720"}
+    - {name: DB_TYPE, default: pgx}
+    - {name: DB_HOST, required: true, from: "database.host"}
+    - {name: DB_PORT, required: true, from: "database.port"}
+    - {name: DB_USER, required: true, from: "database.user"}
+    - {name: DB_PASSWORD, required: true, secret: true, from: "database.password"}
+    - {name: DB_NAME, required: true, from: "database.name"}
+    - {name: DB_SSL_MODE, required: true, from: "database.sslmode"}
+    - {name: DB_MAX_CONNECTIONS, default: "100"}
+    - {name: DB_MAX_IDLE_CONNECTIONS, default: "10"}
+    - {name: DB_MAX_LIFETIME_CONNECTIONS, default: "2"}
+    - {name: REDIS_HOST, required: true, from: "cache.host"}
+    - {name: REDIS_PORT, required: true, from: "cache.port"}
+    - {name: REDIS_PASSWORD, secret: true, from: "cache.password", default: ""}
+    - {name: REDIS_DB_NUMBER, from: "cache.db", default: "0"}
+health:
+  type: http
+  portName: http
+  path: /swagger/index.html
+  expect: 200
+  interval: 10s
+  timeout: 3s
+  retries: 12
+resources:
+  dockerfile: Dockerfile
+  buildContext: .
+  migrationsPath: platform/migrations
+  migrateImage: migrate/migrate
+  migrationsNumber: "1"
+requires:
+  - name: database
+    attributes: {driver: postgres}
+  - name: cache
+    attributes: {driver: redis}
+offers:
+  - name: http-api
+    attributes: {basePath: /api/v1}
+  - name: http-upstream
+    attributes: {port: http}
+  - name: browser-api
+  - name: migrations
+    attributes: {format: golang-migrate}
+glue:
+  envFile: .env
+---
+apiVersion: cgapp.io/v1
+kind: backend
+name: net/http
+display: net/http (Go)
+version: "1.x"
+upstream: net_http-go-template@master
+runtime:
+  language: go
+  version: ">=1.17"
+ports:
+  - name: http
+    port: 5000
+    hostPort: 5000
+    protocol: tcp
+    candidates: [5001, 5002, 5003, 5004, 5005, 5006, 5007, 5008, 5009]
+routes:
+  - path: /api/v1
+    kind: api
+    method: GET
+  - path: /swagger/index.html
+    kind: docs
+    method: GET
+    expect: 200
+auth:
+  mechanism: jwt
+  cors:
+    enabled: false
+env:
+  consumes:
+    - {name: SERVER_HOST, default: "0.0.0.0"}
+    - {name: SERVER_PORT, required: true, from: "self.port.http"}
+    - {name: SERVER_READ_TIMEOUT, default: "60"}
+    - {name: JWT_SECRET_KEY, required: true, secret: true, default: secret}
+    - {name: JWT_REFRESH_KEY, required: true, secret: true, default: refresh}
+    - {name: DB_HOST, required: true, from: "database.host"}
+    - {name: DB_PORT, required: true, from: "database.port"}
+    - {name: DB_USER, required: true, from: "database.user"}
+    - {name: DB_PASSWORD, required: true, secret: true, from: "database.password"}
+    - {name: DB_NAME, required: true, from: "database.name"}
+    - {name: DB_SSL_MODE, required: true, from: "database.sslmode"}
+    - {name: DB_MAX_CONNECTIONS, default: "100"}
+    - {name: DB_MAX_IDLE_CONNECTIONS, default: "10"}
+    - {name: DB_MAX_LIFETIME_CONNECTIONS, default: "2"}
+health:
+  type: http
+  portName: http
+  path: /swagger/index.html
+  expect: 200
+  interval: 10s
+  timeout: 3s
+  retries: 12
+resources:
+  dockerfile: Dockerfile
+  buildContext: .
+  migrationsPath: platform/migrations
+  migrateImage: migrate/migrate
+  migrationsNumber: "1"
+requires:
+  - name: database
+    attributes: {driver: postgres}
+offers:
+  - name: http-api
+    attributes: {basePath: /api/v1}
+  - name: http-upstream
+    attributes: {port: http}
+  - name: migrations
+    attributes: {format: golang-migrate}
+glue:
+  envFile: .env
+---
+apiVersion: cgapp.io/v1
+kind: backend
+name: chi
+display: chi (Go)
+version: "1.x"
+upstream: chi-go-template@main
+runtime:
+  language: go
+  version: ">=1.17"
+ports:
+  - name: http
+    port: 5000
+    hostPort: 5000
+    protocol: tcp
+    candidates: [5001, 5002, 5003, 5004, 5005, 5006, 5007, 5008, 5009]
+routes:
+  - path: /hc/status
+    kind: health
+    method: GET
+    expect: 200
+auth:
+  mechanism: none
+  cors:
+    enabled: false
+env:
+  consumes:
+    - {name: STAGE_STATUS, default: "dev"}
+    - {name: SERVER_HOST, default: "0.0.0.0"}
+    - {name: SERVER_PORT, required: true, from: "self.port.http"}
+    - {name: SERVER_READ_TIMEOUT, default: "5"}
+    - {name: SERVER_WRITE_TIMEOUT, default: "10"}
+    - {name: SERVER_IDLE_TIMEOUT, default: "120"}
+health:
+  type: http
+  portName: http
+  path: /hc/status
+  expect: 200
+  interval: 10s
+  timeout: 3s
+  retries: 12
+resources:
+  dockerfile: Dockerfile
+  buildContext: .
+offers:
+  - name: http-upstream
+    attributes: {port: http}
+glue:
+  envFile: .env

@@ -1,0 +1,34 @@
+# Built-in cache capability contracts.
+---
+apiVersion: cgapp.io/v1
+kind: cache
+name: redis
+display: Redis
+version: "latest"
+upstream: official redis image
+runtime:
+  language: image
+  image: redis
+ports:
+  - name: redis
+    port: 6379
+    hostPort: 6379
+    protocol: tcp
+    candidates: [16379, 6380, 6381, 6382]
+auth:
+  mechanism: none
+env:
+  produces:
+    - {name: REDIS_HOST, default: cgapp-redis}
+    - {name: REDIS_PORT, default: "6379"}
+    - {name: REDIS_PASSWORD, secret: true, default: ""}
+    - {name: REDIS_DB_NUMBER, default: "0"}
+health:
+  type: tcp
+  portName: redis
+  interval: 10s
+  timeout: 3s
+  retries: 12
+offers:
+  - name: cache
+    attributes: {driver: redis}

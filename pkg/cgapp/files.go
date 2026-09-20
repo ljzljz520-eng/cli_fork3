@@ -67,6 +67,48 @@ func CopyFromEmbeddedFS(efs *EmbeddedFileSystem) error {
 	return nil
 }
 
+// CopyFromEmbeddedFSTo copies an embedded file system into targetDir instead
+// of the process working directory. With SkipDir the root folder prefix is
+// stripped (files are copied flat into targetDir, matching CopyFromEmbeddedFS
+// for the templates/misc roots); otherwise the walked paths (including the
+// root folder) are preserved.
+func CopyFromEmbeddedFSTo(targetDir string, efs *EmbeddedFileSystem) error {
+	return fs.WalkDir(efs.Name, efs.RootFolder, func(path string, entry fs.DirEntry, err error) error {
+		if err != nil {
+			return ShowError(
+				fmt.Sprintf("Can't copy files from embedded path `%v`!", efs.RootFolder),
+			)
+		}
+
+		var relative string
+		if efs.SkipDir {
+			relative = strings.TrimPrefix(path, efs.RootFolder+"/")
+		} else {
+			relative = path
+		}
+
+		if entry.IsDir() {
+			if !efs.SkipDir || relative != "" {
+				if err := os.MkdirAll(filepath.Join(targetDir, relative), 0o750); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+
+		fileData, errReadFile := fs.ReadFile(efs.Name, path)
+		if errReadFile != nil {
+			return errReadFile
+		}
+
+		target := filepath.Join(targetDir, relative)
+		if err := os.MkdirAll(filepath.Dir(target), 0o750); err != nil {
+			return err
+		}
+		return MakeFile(target, fileData)
+	})
+}
+
 // GenerateFileFromTemplate func to generate files from templates.
 func GenerateFileFromTemplate(fileName string, variables map[string]interface{}) error {
 	// Checking file name.

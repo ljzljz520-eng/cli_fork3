@@ -13,10 +13,10 @@ import (
 )
 
 var (
-	backend, frontend, proxy           string                 // define project variables
-	inventory, playbook                map[string]interface{} // define template variables
-	options, proxyList                 []string               // define options, proxy list
+	options                            []string               // define command options
 	useCustomTemplate                  bool                   // define custom templates
+	noVerify                           bool                   // skip ephemeral stack verification
+	forceCompatibility                 bool                   // bypass solver conflicts (warnings only)
 	askBecomePass                      bool                   // install Ansible roles, ask become pass
 	createAnswers, customCreateAnswers registry.CreateAnswers // define answers variable for `create` command
 

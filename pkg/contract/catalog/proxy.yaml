@@ -1,0 +1,103 @@
+# Built-in reverse-proxy / ingress capability contracts.
+#
+# Verify stacks always run proxies on the HTTP entrypoint; TLS/ACME is a
+# production-environment concern and is not exercised by contract tests.
+---
+apiVersion: cgapp.io/v1
+kind: proxy
+name: nginx
+display: Nginx
+version: "alpine"
+runtime:
+  language: image
+  image: nginx
+ports:
+  - name: http
+    port: 80
+    hostPort: 80
+    protocol: tcp
+    candidates: [8080, 8081, 8082, 8083]
+  - name: https
+    port: 443
+    hostPort: 0
+    protocol: tcp
+auth:
+  mechanism: none
+health:
+  type: tcp
+  portName: http
+  interval: 10s
+  timeout: 3s
+  retries: 12
+requires:
+  - name: http-upstream
+offers:
+  - name: ingress
+    attributes: {scheme: http, tls: manual, sameOriginApi: "true"}
+  - name: browser-api
+---
+apiVersion: cgapp.io/v1
+kind: proxy
+name: traefik
+display: Traefik
+version: "latest"
+runtime:
+  language: image
+  image: traefik
+ports:
+  - name: http
+    port: 80
+    hostPort: 80
+    protocol: tcp
+    candidates: [8080, 8081, 8082, 8083]
+  - name: https
+    port: 443
+    hostPort: 0
+    protocol: tcp
+auth:
+  mechanism: none
+health:
+  type: tcp
+  portName: http
+  interval: 10s
+  timeout: 3s
+  retries: 12
+requires:
+  - name: http-upstream
+offers:
+  - name: ingress
+    attributes: {scheme: http, tls: acme, sameOriginApi: "true"}
+  - name: browser-api
+---
+apiVersion: cgapp.io/v1
+kind: proxy
+name: traefik-acme-dns
+display: Traefik (ACME DNS challenge)
+version: "latest"
+runtime:
+  language: image
+  image: traefik
+ports:
+  - name: http
+    port: 80
+    hostPort: 80
+    protocol: tcp
+    candidates: [8080, 8081, 8082, 8083]
+  - name: https
+    port: 443
+    hostPort: 0
+    protocol: tcp
+auth:
+  mechanism: none
+health:
+  type: tcp
+  portName: http
+  interval: 10s
+  timeout: 3s
+  retries: 12
+requires:
+  - name: http-upstream
+offers:
+  - name: ingress
+    attributes: {scheme: http, tls: acme-dns, sameOriginApi: "true"}
+  - name: browser-api

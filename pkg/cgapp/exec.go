@@ -13,6 +13,12 @@ import (
 
 // ExecCommand function to execute a given command.
 func ExecCommand(command string, options []string, silentMode bool) error {
+	return ExecCommandInDir("", command, options, silentMode)
+}
+
+// ExecCommandInDir executes a command with the given working directory. An
+// empty directory keeps the current process working directory.
+func ExecCommandInDir(dir, command string, options []string, silentMode bool) error {
 	// Checking for nil.
 	if command == "" || options == nil {
 		return fmt.Errorf("no command to execute")
@@ -23,6 +29,7 @@ func ExecCommand(command string, options []string, silentMode bool) error {
 
 	// Collect command line.
 	cmd := exec.Command(command, options...) // #nosec G204
+	cmd.Dir = dir
 
 	// Set buffer for stderr from cmd.
 	cmd.Stderr = stderr

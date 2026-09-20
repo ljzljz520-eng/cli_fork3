@@ -33,3 +33,6 @@ dist/
 
 # Go generate files
 *_gen.go
+
+# cgapp create staging directories
+.cgapp-tmp-*
